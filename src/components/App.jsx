@@ -1,39 +1,32 @@
 import { Component } from 'react';
-import axios from 'axios';
-
 
 import { ImageGallery } from './ImageGallery/ImageGallerry';
 import { Searchbar } from './Searchbar/Searchbar';
 import { ImageGalleryItem } from './ImageGalleryItem/ImageGalleryItem';
+import { getImages } from 'services/getImages';
 // import { Button } from './Button/Button';
-// import { Loader } from './Loader/Loader';
+import { Loader } from './Loader/Loader';
 // import { Modal } from './Modal/Modal';
 
 export class App extends Component {
   state = {
-    searchQuery: ' ',
+    searchQuery: '',
     images: [],
     isLoading: false,
     error: null,
   };
 
   async componentDidUpdate(prevState) {
+    if (!this.state.searchQuery) return;
     if (prevState.searchQuery !== this.state.searchQuery) {
-      this.setState({ isLoading: true });
-      const BASE_URL = 'https://pixabay.com/api/?key=';
-      const API_KEY = '33161482-d6f209deccbe404fb00ae6950';
-      const params = new URLSearchParams({
-        key: API_KEY,
-        image_type: 'photo',
-        orientation: 'horizontal',
-        safesearch: 'true',
-        per_page: 12,
-      });
       try {
-        const response = await axios.get(
-          `${BASE_URL}${API_KEY}&q=${this.state.searchQuery}&${params}`
-        );
-        this.setState({ images: response.data });
+        this.setState({ isLoading: true });
+        const images = await getImages(this.state.searchQuery);
+        console.log(images);
+        this.setState({
+          images,
+          isLoading: false,
+        });
       } catch (error) {
         this.setState({ error });
       } finally {
@@ -41,16 +34,23 @@ export class App extends Component {
       }
     }
   }
-  handleSearch = searchQuery => {
+
+  getSearchQuery = searchQuery => {
     this.setState({ searchQuery });
   };
+
   render() {
+    const { images, isLoading, error } = this.state;
     return (
       <div>
-        <Searchbar onSubmit={this.handleSearch} />
-        <ImageGallery searchQuery={this.state.searchQuery}>
-          <ImageGalleryItem />
-        </ImageGallery>
+        <Searchbar onSubmit={this.getSearchQuery} isSubmitting={isLoading} />
+        {error && <p>Whoops, something went wrong: {error.message}</p>}
+        {isLoading && <Loader />}
+        {images.length > 0 && (
+          <ImageGallery images={images}>
+            <ImageGalleryItem />
+          </ImageGallery>
+        )}
       </div>
     );
   }
@@ -60,5 +60,5 @@ export class App extends Component {
         <ImageGalleryItem />
       </ImageGallery>
       <Button />
-      <Loader />
+      
       <Modal /> */
