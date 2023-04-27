@@ -19,8 +19,6 @@ export const getImages = async (searchQuery, page) => {
       page: page,
     },
   };
-  console.log(config);
   const response = await axios.get('', config);
   return response.data.hits;
 };
-//
