@@ -9,8 +9,8 @@ export const Modal = ({ tags, imageURL, onClose }) => {
   });
 
   return (
-    <div className={css.Overlay} onClick={() => onClose()}>
-      <div className={css.Modal}>
+    <div className={css.Overlay}>
+      <div className={css.Modal} onClick={() => onClose()}>
         <img src={imageURL} alt={tags} />
       </div>
     </div>

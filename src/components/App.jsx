@@ -1,25 +1,20 @@
-import { Component } from 'react';
+import React, { useState } from 'react';
 
-import { ImageGallery } from './ImageGallery/ImageGallerry';
+import ImageGallery from './ImageGallery/ImageGallerry';
 import { Searchbar } from './Searchbar/Searchbar';
 
-export class App extends Component {
-  state = {
-    searchQuery: '',
-    isLoading: false,
+export default function App() {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isLoading] = useState(false);
+
+  const getSearchQuery = searchQuery => {
+    setSearchQuery(searchQuery);
   };
 
-  getSearchQuery = searchQuery => {
-    this.setState({ searchQuery });
-  };
-
-  render() {
-    return (
-      <div>
-        <Searchbar onSubmit={this.getSearchQuery} isSubmitting={this.state.isLoading} />
-        <ImageGallery searchQuery={this.state.searchQuery} />
-      </div>
-    );
-  }
+  return (
+    <div>
+      <Searchbar onSubmit={getSearchQuery} isSubmitting={isLoading} />
+      <ImageGallery query={searchQuery} />
+    </div>
+  );
 }
-
